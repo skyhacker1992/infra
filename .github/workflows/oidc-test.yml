@@ -1,0 +1,29 @@
+name: Test OIDC AWS Access
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # so you can also run it manually
+
+permissions:
+  id-token: write   # Required for OIDC
+  contents: read
+
+jobs:
+  aws-oidc-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::562475404381:role/GitHubActions-OIDC
+          aws-region: us-east-1
+          role-session-name: GitHubActionsSession
+
+      - name: Verify identity
+        run: |
+          echo "Successfully assumed role!"
+          aws sts get-caller-identity
