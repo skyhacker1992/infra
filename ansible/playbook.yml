@@ -1,0 +1,5 @@
+- name: Configure devbox machines
+  hosts: all
+  become: true
+  roles:
+    - devbox

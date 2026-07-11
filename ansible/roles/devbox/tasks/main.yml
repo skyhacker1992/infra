@@ -1,0 +1,17 @@
+- name: Ensure git, docker, and zsh are installed
+  package:
+    name:
+      - git
+      - docker
+      - zsh
+    state: present
+
+- name: Ensure Linux users exist
+  user:
+    name: "{{ item }}"
+    state: present
+    shell: /bin/zsh
+  loop:
+    - matt-smith
+    - sara-smith
+    - jimmy-jamz
