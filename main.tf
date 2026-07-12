@@ -177,7 +177,7 @@ resource "aws_eks_cluster" "main" {
 }
 
 ############################
-# Node Group (FIXED - using t3.micro)
+# Node Group (FIXED - using t3.small)
 ############################
 resource "aws_eks_node_group" "main" {
   cluster_name    = aws_eks_cluster.main.name
@@ -186,12 +186,12 @@ resource "aws_eks_node_group" "main" {
   subnet_ids      = aws_subnet.public[*].id
 
   scaling_config {
-    desired_size = 2
+    desired_size = 1
     max_size     = 3
     min_size     = 1
   }
 
-  instance_types = ["t3.micro"] # ← Changed from t3.medium
+  instance_types = ["t3.small"] # ← Changed from t3.medium
 
   depends_on = [
     aws_iam_role_policy_attachment.node_AmazonEKSWorkerNodePolicy,
@@ -220,5 +220,27 @@ provider "helm" {
     host                   = aws_eks_cluster.main.endpoint
     cluster_ca_certificate = base64decode(aws_eks_cluster.main.certificate_authority[0].data)
     token                  = data.aws_eks_cluster_auth.cluster.token
+  }
+}
+
+############################
+# Argo CD (GitOps)
+############################
+resource "helm_release" "argocd" {
+  name       = "argocd"
+  repository = "https://argoproj.github.io/argo-helm"
+  chart      = "argo-cd"
+  version    = "7.3.11"          # pinned stable version
+  namespace  = "argocd"
+
+  create_namespace = true
+
+  depends_on = [
+    aws_eks_node_group.main
+  ]
+
+  set {
+    name  = "server.service.type"
+    value = "LoadBalancer"       # easy for demo video
   }
 }
