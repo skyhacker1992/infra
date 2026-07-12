@@ -224,23 +224,31 @@ provider "helm" {
 }
 
 ############################
-# Argo CD (GitOps)
+# Argo CD (GitOps) - safer version
 ############################
-resource "helm_release" "argocd" {
-  name       = "argocd"
-  repository = "https://argoproj.github.io/argo-helm"
-  chart      = "argo-cd"
-  version    = "7.3.11"          # pinned stable version
-  namespace  = "argocd"
-
-  create_namespace = true
+resource "kubernetes_namespace" "argocd" {
+  metadata {
+    name = "argocd"
+  }
 
   depends_on = [
     aws_eks_node_group.main
   ]
+}
+
+resource "helm_release" "argocd" {
+  name       = "argocd"
+  repository = "https://argoproj.github.io/argo-helm"
+  chart      = "argo-cd"
+  version    = "7.3.11"
+  namespace  = kubernetes_namespace.argocd.metadata[0].name
+
+  depends_on = [
+    kubernetes_namespace.argocd
+  ]
 
   set {
     name  = "server.service.type"
-    value = "LoadBalancer"       # easy for demo video
+    value = "LoadBalancer"
   }
 }
