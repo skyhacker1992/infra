@@ -65,9 +65,9 @@ resource "aws_subnet" "public" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
   tags = merge(local.common_tags, {
-    Name                              = "${local.cluster_name}-public-${count.index + 1}"
-    "kubernetes.io/role/elb"          = "1"
-    "kubernetes.io/role/internal-elb" = "1"
+    Name                                          = "${local.cluster_name}-public-${count.index + 1}"
+    "kubernetes.io/role/elb"                      = "1"
+    "kubernetes.io/role/internal-elb"             = "1"
     "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   })
 }
@@ -97,8 +97,8 @@ resource "aws_iam_role" "cluster" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Action    = "sts:AssumeRole"
-      Effect    = "Allow"
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
       Principal = {
         Service = "eks.amazonaws.com"
       }
@@ -117,8 +117,8 @@ resource "aws_iam_role" "node" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Action    = "sts:AssumeRole"
-      Effect    = "Allow"
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
       Principal = {
         Service = "ec2.amazonaws.com"
       }
@@ -150,7 +150,7 @@ resource "aws_eks_cluster" "main" {
   role_arn = aws_iam_role.cluster.arn
   version  = "1.30"
 
-  authentication_mode = "API_AND_CONFIG_MAP"   # ← Added for Access Entries
+  authentication_mode = "API_AND_CONFIG_MAP" # ← Added for Access Entries
 
   vpc_config {
     subnet_ids              = aws_subnet.public[*].id
