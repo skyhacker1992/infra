@@ -213,13 +213,11 @@ provider "helm" {
 }
 
 ############################
-# EKS Access Entry (Your IAM User)
-############################
-resource "aws_eks_access_entry" "admin" {
-  cluster_name  = aws_eks_cluster.main.name
-  principal_arn = "arn:aws:iam::562475404381:user/skyhacker-terraform"
-  type          = "STANDARD"
-}
+# EKS Access Entry (removed)
+# The cluster-level Access Entry resource was causing API errors during apply
+# because the cluster authentication mode isn't configured for it in this
+# environment/provider. Remove or re-add this resource only after enabling
+# the appropriate EKS authentication mode or upgrading the provider.
 
 ############################
 # ClusterRoleBinding (Full Admin Access)
@@ -240,7 +238,7 @@ resource "kubernetes_cluster_role_binding" "admin" {
   }
 
   depends_on = [
-    aws_eks_access_entry.admin
+    aws_eks_node_group.main
   ]
 }
 
