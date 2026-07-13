@@ -150,7 +150,7 @@ resource "aws_eks_cluster" "main" {
   role_arn = aws_iam_role.cluster.arn
   version  = "1.30"
 
-  authentication_mode = "API_AND_CONFIG_MAP" # ← Added for Access Entries
+  # Access Entries are configured via aws_eks_access_entry resources.
 
   vpc_config {
     subnet_ids              = aws_subnet.public[*].id
