@@ -219,7 +219,7 @@ provider "helm" {
 # environment/provider. Remove or re-add this resource only after enabling
 # the appropriate EKS authentication mode or upgrading the provider.
 
-############################
+#############################
 # ClusterRoleBinding (Full Admin Access)
 ############################
 resource "kubernetes_cluster_role_binding" "admin" {
