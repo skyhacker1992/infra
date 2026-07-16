@@ -221,7 +221,7 @@ provider "helm" {
 
 #############################
 # ClusterRoleBinding (Full Admin Access)
-############################
+#############################
 resource "kubernetes_cluster_role_binding" "admin" {
   metadata {
     name = "eks-admin"
